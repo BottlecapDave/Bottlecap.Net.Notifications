@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Bottlecap.Net.Notifications.Transporters.SendGrid</RootNamespace>
+    <Authors>David Kendall</Authors>
+    <Company />
+    <Product>Bottlecap.Net.Notifications.Transporters.SendGrid</Product>
   </PropertyGroup>
 
   <ItemGroup>
