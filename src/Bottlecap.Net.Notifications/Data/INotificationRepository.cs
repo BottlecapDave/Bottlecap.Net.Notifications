@@ -1,10 +1,9 @@
-﻿using Bottlecap.Net.Notifications.Schedulers;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Data
 {
     public interface INotificationRepository
     {
-        Task AddAsync(string key, IUser user, object content);
+        Task<bool> AddAsync(string notificationType, string transportType, object destination, object content);
     }
 }

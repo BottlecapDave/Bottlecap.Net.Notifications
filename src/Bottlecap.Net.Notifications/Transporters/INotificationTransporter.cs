@@ -4,8 +4,10 @@ namespace Bottlecap.Net.Notifications.Transporters
 {
     public interface INotificationTransporter
     {
-        string Category { get; }
+        string TransporterType { get; }
 
-        Task<bool> SendAsync();
+        INotificationRecipientExtractor RecipientExtractor { get; }
+
+        Task<bool> SendAsync(string notificationType, object recipients, object content);
     }
 }

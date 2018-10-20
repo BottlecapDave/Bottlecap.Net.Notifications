@@ -1,4 +1,4 @@
-﻿namespace Bottlecap.Net.Notifications.Schedulers
+﻿namespace Bottlecap.Net.Notifications.Data
 {
     public interface IUser
     {

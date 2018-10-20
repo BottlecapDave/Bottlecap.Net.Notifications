@@ -1,16 +1,13 @@
-﻿using Bottlecap.Net.Notifications.Schedulers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Bottlecap.Net.Notifications.Transporters
 {
     public interface INotificationTransportManager
     {
-        void Register(INotificationTransporter transporter, IUserSettingsService userSettingService);
+        void Register(INotificationTransporter transporter);
+        
+        INotificationTransporter Get(string transportType);
 
-        INotificationTransporter GetTransporter(string category);
-
-        IUserSettingsService GetUserSettingsService(string category);
-
-        IEnumerable<string> GetCategories();
+        IEnumerable<INotificationTransporter> GetTransporters();
     }
 }
