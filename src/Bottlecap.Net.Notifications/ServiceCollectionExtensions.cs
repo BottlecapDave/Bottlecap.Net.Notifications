@@ -1,5 +1,5 @@
 ﻿using Bottlecap.Net.Notifications.Data;
-using Bottlecap.Net.Notifications.Schedulers;
+using Bottlecap.Net.Notifications.Services;
 using Bottlecap.Net.Notifications.Transporters;
 using Microsoft.Extensions.DependencyInjection;
 

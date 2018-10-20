@@ -2,7 +2,7 @@
 using Bottlecap.Net.Notifications.Transporters;
 using System.Threading.Tasks;
 
-namespace Bottlecap.Net.Notifications.Schedulers
+namespace Bottlecap.Net.Notifications.Services
 {
     public class NotificationService : INotificationService
     {

@@ -4,9 +4,6 @@
     <RootNamespace>Bottlecap.Net.Notifications</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ServiceCollectionExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
   </ItemGroup>
 </Project>
