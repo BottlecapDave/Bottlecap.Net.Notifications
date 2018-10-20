@@ -17,8 +17,7 @@ RUN dotnet build ./Bottlecap.Net.Notifications/ -c Release -o out /p:Version=$PA
 
 # pack notifications
 RUN dotnet pack ./Bottlecap.Net.Notifications/ -c Release -o out --no-build --no-restore /p:Version=$PACKAGE_VERSION
-RUN ls -l ./Bottlecap.Net.Notifications/out
-RUN dotnet nuget push ./Bottlecap.Net.Notifications/out/*.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API
+RUN dotnet nuget push ./Bottlecap.Net.Notifications/out/Bottlecap.Net.Notifications.$PACKAGE_VERSION.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API
 
 # Copy all sendgrid and build
 COPY src/Bottlecap.Net.Notifications.Transporters.SendGrid/. ./Bottlecap.Net.Notifications.Transporters.SendGrid/
@@ -26,5 +25,4 @@ RUN dotnet build ./Bottlecap.Net.Notifications.Transporters.SendGrid/ -c Release
 
 # pack sendgrid
 RUN dotnet pack ./Bottlecap.Net.Notifications.Transporters.SendGrid/ -c Release -o out --no-build --no-restore /p:Version=$PACKAGE_VERSION
-RUN ls -l ./Bottlecap.Net.Notifications.Transporters.SendGrid/out
-RUN dotnet nuget push ./Bottlecap.Net.Notifications.Transporters.SendGrid/out/*.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API
+RUN dotnet nuget push ./Bottlecap.Net.Notifications.Transporters.SendGrid/out/Bottlecap.Net.Notifications.Transporters.SendGrid.$PACKAGE_VERSION.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API
