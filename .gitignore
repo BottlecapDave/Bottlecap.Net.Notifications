@@ -1,3 +1,5 @@
 src/Bottlecap.Net.Notifications/obj/
 src/Bottlecap.Net.Notifications/bin/
 src/.vs/
+src/Bottlecap.Net.Notifications.Transporters.SendGrid/bin/
+src/Bottlecap.Net.Notifications.Transporters.SendGrid/obj/

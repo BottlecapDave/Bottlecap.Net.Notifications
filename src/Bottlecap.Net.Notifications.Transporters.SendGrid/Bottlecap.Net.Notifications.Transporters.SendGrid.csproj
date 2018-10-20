@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Bottlecap.Net.Notifications.Transporters.SendGrid</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sendgrid" Version="9.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bottlecap.Net.Notifications\Bottlecap.Net.Notifications.csproj" />
+  </ItemGroup>
+
+</Project>
