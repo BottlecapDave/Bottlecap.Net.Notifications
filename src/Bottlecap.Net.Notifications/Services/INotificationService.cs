@@ -5,6 +5,10 @@ namespace Bottlecap.Net.Notifications.Services
 {
     public interface INotificationService
     {
-        Task<bool> ScheduleAsync(string notificationType, object content, IUser user);
+        Task<INotificationData> ScheduleAsync(string notificationType, object content, IUser user);
+        
+        Task<NotifyStatus> NotifyAsync(string notificationType, object content, IUser user);
+
+        Task<NotifyStatus> NotifyAsync();
     }
 }
