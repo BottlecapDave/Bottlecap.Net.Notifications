@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bottlecap.Net.Notifications", "Bottlecap.Net.Notifications\Bottlecap.Net.Notifications.csproj", "{8149AA19-A0D5-4802-B810-AE39D0327D0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bottlecap.Net.Notifications.Transporters.SendGrid", "Bottlecap.Net.Notifications.Transporters.SendGrid\Bottlecap.Net.Notifications.Transporters.SendGrid.csproj", "{5D5CD029-108C-445A-933D-3B504D634D12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bottlecap.Net.Notifications.Transporters.SendGrid", "Bottlecap.Net.Notifications.Transporters.SendGrid\Bottlecap.Net.Notifications.Transporters.SendGrid.csproj", "{5D5CD029-108C-445A-933D-3B504D634D12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bottlecap.Net.Notifications.EF", "Bottlecap.Net.Notifications.EF\Bottlecap.Net.Notifications.EF.csproj", "{4330B597-C0D8-4E88-860E-BCC479D2A823}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5D5CD029-108C-445A-933D-3B504D634D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D5CD029-108C-445A-933D-3B504D634D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D5CD029-108C-445A-933D-3B504D634D12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

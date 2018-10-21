@@ -18,6 +18,8 @@ namespace Bottlecap.Net.Notifications.Data
 
         int RetryCount { get; set; }
 
+        DateTime? NextExecutionTimestamp { get; set; }
+
         DateTime CreationTimestamp { get; set; }
 
         DateTime? LastUpdatedTimestamp { get; set; }

@@ -75,15 +75,18 @@ namespace Bottlecap.Net.Notifications.Services
             finally
             {
                 data.State = wasSuccessful ? NotificationState.Successful : NotificationState.Failed;
-                
+                DateTime? nextExecutionTimestamp = null;
+
                 if (wasSuccessful == false &&
                     (_options.MaximumRetryCount == null || data.RetryCount < _options.MaximumRetryCount))
                 {
                     data.State = NotificationState.WaitingForRetry;
                     data.RetryCount++;
+
+                    nextExecutionTimestamp = DateTime.UtcNow.AddSeconds(_options.RetryCoolDownInSeconds * data.RetryCount * _options.RetryCoolDownMagnitude);
                 }
                 
-                await _repository.UpdateAsync(data.Id, data.State, data.RetryCount);
+                await _repository.UpdateAsync(data.Id, data.State, data.RetryCount, nextExecutionTimestamp);
             }
 
             switch (data.State)
