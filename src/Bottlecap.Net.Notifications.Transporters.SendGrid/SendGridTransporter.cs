@@ -12,7 +12,7 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
     {
         private readonly SendGridOptions _options;
         private readonly ITemplateService _templateService;
-        private readonly SendGridClient _client;
+        private readonly ISendGridClient _client;
 
         public string TransporterType {  get { return "Email"; } }
 
@@ -20,11 +20,19 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
         public SendGridTransporter(SendGridOptions options, 
                                    INotificationRecipientExtractor recipientExtractor, 
+                                   ITemplateService templateService = null):
+            this (new SendGridClient(options.ApiKey), options, recipientExtractor, templateService)
+        {
+        }
+
+        public SendGridTransporter(ISendGridClient client,
+                                   SendGridOptions options,
+                                   INotificationRecipientExtractor recipientExtractor,
                                    ITemplateService templateService = null)
         {
             _options = options;
             _templateService = templateService;
-            _client = new SendGridClient(options.ApiKey);
+            _client = client;
 
             RecipientExtractor = recipientExtractor;
         }
