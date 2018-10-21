@@ -6,3 +6,5 @@ src/Bottlecap.Net.Notifications.Transporters.SendGrid/obj/
 build.cmd
 src/Bottlecap.Net.Notifications.Transporters.SendGrid/out/Bottlecap.Net.Notifications.Transporters.SendGrid.0.1.0-alpha.nupkg
 src/Bottlecap.Net.Notifications.Transporters.SendGrid/out/Bottlecap.Net.Notifications.Transporters.SendGrid.deps.json
+src/Bottlecap.Net.Notifications/out/
+src/Bottlecap.Net.Notifications.Transporters.SendGrid/out/

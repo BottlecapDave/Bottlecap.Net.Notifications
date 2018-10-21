@@ -1,4 +1,4 @@
-﻿namespace Bottlecap.Net.Notifications.Transporters.SendGrid
+﻿namespace Bottlecap.Net.Notifications.Transporters.Extractors.Emails
 {
     public class Email
     {

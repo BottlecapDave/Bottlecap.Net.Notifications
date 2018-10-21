@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Bottlecap.Net.Notifications.Transporters.SendGrid
+namespace Bottlecap.Net.Notifications.Transporters.Extractors.Emails
 {
     public class EmailRecipients
     {

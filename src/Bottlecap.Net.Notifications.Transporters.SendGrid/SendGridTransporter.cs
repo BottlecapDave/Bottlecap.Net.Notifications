@@ -4,6 +4,7 @@ using SendGrid.Helpers.Mail;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using Bottlecap.Net.Notifications.Transporters.Extractors.Emails;
 
 namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 {
