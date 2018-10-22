@@ -16,7 +16,7 @@ namespace Bottlecap.Net.Notifications.EF
         [NotMapped]
         public object Recipients { get; set; }
 
-        [Column("Recipients", TypeName = "jsonb")]
+        [Column("Recipients")]
         [JsonIgnore]
         public string RecipientsAsJson
         {
@@ -33,7 +33,7 @@ namespace Bottlecap.Net.Notifications.EF
         [NotMapped]
         public object Content { get; set; }
 
-        [Column("Content", TypeName = "jsonb")]
+        [Column("Content")]
         [JsonIgnore]
         public string ContentAsJson
         {
@@ -47,6 +47,7 @@ namespace Bottlecap.Net.Notifications.EF
             }
         }
 
+        [Column(TypeName = "string")]
         public NotificationState State { get; set; }
 
         public int RetryCount { get; set; }

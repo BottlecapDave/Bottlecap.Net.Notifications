@@ -1,4 +1,4 @@
-﻿using Bottlecap.Net.Notifications.Transporters.Extractors.Emails;
+﻿using Bottlecap.Net.Notifications.Transporters.Resolvers.Emails;
 using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Transporters.SendGrid

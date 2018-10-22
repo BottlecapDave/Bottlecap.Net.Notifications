@@ -4,7 +4,7 @@ using SendGrid.Helpers.Mail;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using Bottlecap.Net.Notifications.Transporters.Extractors.Emails;
+using Bottlecap.Net.Notifications.Transporters.Resolvers.Emails;
 
 namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 {
@@ -16,25 +16,25 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
         public string TransporterType {  get { return "Email"; } }
 
-        public Transporters.INotificationRecipientExtractor RecipientExtractor { get; private set; }
+        public Transporters.INotificationRecipientResolver RecipientResolver { get; private set; }
 
         public SendGridTransporter(SendGridOptions options, 
-                                   INotificationRecipientExtractor recipientExtractor, 
+                                   INotificationRecipientResolver recipientResolver, 
                                    ITemplateService templateService = null):
-            this (new SendGridClient(options.ApiKey), options, recipientExtractor, templateService)
+            this (new SendGridClient(options.ApiKey), options, recipientResolver, templateService)
         {
         }
 
         public SendGridTransporter(ISendGridClient client,
                                    SendGridOptions options,
-                                   INotificationRecipientExtractor recipientExtractor,
+                                   INotificationRecipientResolver recipientResolver,
                                    ITemplateService templateService = null)
         {
             _options = options;
             _templateService = templateService;
             _client = client;
 
-            RecipientExtractor = recipientExtractor;
+            RecipientResolver = recipientResolver;
         }
 
         public async Task<bool> SendAsync(string notificationType, object recipients, object content)

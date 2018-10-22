@@ -6,7 +6,7 @@ namespace Bottlecap.Net.Notifications.Transporters
     {
         string TransporterType { get; }
 
-        INotificationRecipientExtractor RecipientExtractor { get; }
+        INotificationRecipientResolver RecipientResolver { get; }
 
         Task<bool> SendAsync(string notificationType, object recipients, object content);
     }

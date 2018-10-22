@@ -49,7 +49,7 @@ namespace Bottlecap.Net.Notifications.Services
         {
             foreach (var transporter in _manager.GetTransporters())
             {
-                var destination = await transporter.RecipientExtractor.GetRecipientsAsync(user, notificationType, transporter.TransporterType);
+                var destination = await transporter.RecipientResolver.ResolveAsync(user, notificationType, transporter.TransporterType);
                 if (destination != null)
                 {
                     return await _repository.AddAsync(notificationType, transporter.TransporterType, destination, content);

@@ -1,4 +1,4 @@
-﻿namespace Bottlecap.Net.Notifications.Transporters.Extractors.Emails
+﻿namespace Bottlecap.Net.Notifications.Transporters.Resolvers.Emails
 {
     public class Email
     {
