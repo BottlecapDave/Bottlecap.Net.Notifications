@@ -39,7 +39,7 @@ namespace Bottlecap.Net.Notifications.EF
         {
             return Task.FromResult<IEnumerable<INotificationData>>(_context.Notifications.Where(x => 
                 (
-                    (x.State == NotificationState.Created || x.State == NotificationState.WaitingForRetry) &&
+                    (x.State == NotificationState.Created || x.State == NotificationState.WaitingForRetry || x.State == NotificationState.TransporterNotFound) &&
                     (x.NextExecutionTimestamp == null || x.NextExecutionTimestamp <= DateTime.UtcNow)
                 )
             )

@@ -46,9 +46,17 @@ namespace Bottlecap.Net.Notifications.EF
                 this.Content = JsonConvert.DeserializeObject(value);
             }
         }
-
-        [Column(TypeName = "string")]
+        
+        [NotMapped]
         public NotificationState State { get; set; }
+
+        [Column("State")]
+        [JsonIgnore]
+        public string StateAsString
+        {
+            get { return State.ToString(); }
+            set { State = (NotificationState)Enum.Parse(typeof(NotificationState), value); }
+        }
 
         public int RetryCount { get; set; }
 

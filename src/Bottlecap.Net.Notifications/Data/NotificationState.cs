@@ -6,6 +6,7 @@
         Processing,
         Successful,
         WaitingForRetry,
-        Failed
+        Failed,
+        TransporterNotFound
     }
 }
