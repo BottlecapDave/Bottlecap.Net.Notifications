@@ -11,7 +11,8 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
     public class SendGridTransporter : INotificationTransporter
     {
         private readonly SendGridOptions _options;
-        private readonly ITemplateService _templateService;
+        private readonly ITemplateContentResolver _templateContentResolver;
+        private readonly ITemplateIdResolver _templateIdResolver;
         private readonly ISendGridClient _client;
 
         public string TransporterType {  get { return "Email"; } }
@@ -20,18 +21,26 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
         public SendGridTransporter(SendGridOptions options, 
                                    INotificationRecipientResolver recipientResolver, 
-                                   ITemplateService templateService = null):
-            this (new SendGridClient(options.ApiKey), options, recipientResolver, templateService)
+                                   ITemplateContentResolver templateContentResolver = null,
+                                   ITemplateIdResolver templateIdResolver = null) :
+            this (new SendGridClient(options.ApiKey), options, recipientResolver, templateContentResolver, templateIdResolver)
         {
         }
 
         public SendGridTransporter(ISendGridClient client,
                                    SendGridOptions options,
                                    INotificationRecipientResolver recipientResolver,
-                                   ITemplateService templateService = null)
+                                   ITemplateContentResolver templateContentResolver = null,
+                                   ITemplateIdResolver templateIdResolver = null)
         {
+            if (templateContentResolver == null && templateIdResolver == null)
+            {
+                throw new ArgumentNullException("Either a template content resolver or template id resolver must be supplied");
+            }
+
             _options = options;
-            _templateService = templateService;
+            _templateContentResolver = templateContentResolver;
+            _templateIdResolver = templateIdResolver;
             _client = client;
 
             RecipientResolver = recipientResolver;
@@ -45,11 +54,14 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
                 throw new ArgumentException("Recipients was not of type 'EmailRecipients'");
             }
 
-            var message = new SendGridMessage();
-
-            if (_templateService != null)
+            var message = new SendGridMessage()
             {
-                var email = await _templateService.GenerateEmailAsync(notificationType, content);
+                From = new EmailAddress(_options.FromEmailAddress, _options.FromEmailName)
+            };
+
+            if (_templateContentResolver != null)
+            {
+                var email = await _templateContentResolver.GenerateEmailAsync(notificationType, content);
                 if (email == null)
                 {
                     throw new InvalidDataException($"Failed to generate email for '{notificationType}'");
@@ -60,7 +72,13 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
             }
             else
             {
-                message.TemplateId = notificationType;
+                message.TemplateId = await _templateIdResolver.GetTemplateIdAsync(notificationType);
+                if (String.IsNullOrEmpty(message.TemplateId))
+                {
+                    throw new InvalidDataException($"Failed to find template id for '{notificationType}'");
+                }
+
+                message.SetTemplateData(content);
             }
 
             AddRecipients(message.AddTo, emailRecipients.To);
@@ -68,6 +86,7 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
             AddRecipients(message.AddBcc, emailRecipients.BCC);
 
             var response = await _client.SendEmailAsync(message);
+            var responseBody = await response.Body.ReadAsStringAsync();
             return response.StatusCode == System.Net.HttpStatusCode.OK;
         }
 
@@ -77,7 +96,10 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
             {
                 foreach (var address in addresses)
                 {
-                    addAddress(address, null);
+                    if (String.IsNullOrEmpty(address) == false)
+                    {
+                        addAddress(address, String.Empty);
+                    }
                 }
             }
         }

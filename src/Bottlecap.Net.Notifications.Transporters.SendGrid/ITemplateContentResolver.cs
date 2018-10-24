@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 {
-    public interface ITemplateService
+    public interface ITemplateContentResolver
     {
-        Task<Email> GenerateEmailAsync(string type, object content);
+        Task<Email> GenerateEmailAsync(string notificationType, object content);
     }
 }
