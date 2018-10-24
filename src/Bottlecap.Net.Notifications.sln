@@ -7,7 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bottlecap.Net.Notifications
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bottlecap.Net.Notifications.Transporters.SendGrid", "Bottlecap.Net.Notifications.Transporters.SendGrid\Bottlecap.Net.Notifications.Transporters.SendGrid.csproj", "{5D5CD029-108C-445A-933D-3B504D634D12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bottlecap.Net.Notifications.EF", "Bottlecap.Net.Notifications.EF\Bottlecap.Net.Notifications.EF.csproj", "{4330B597-C0D8-4E88-860E-BCC479D2A823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bottlecap.Net.Notifications.EF", "Bottlecap.Net.Notifications.EF\Bottlecap.Net.Notifications.EF.csproj", "{4330B597-C0D8-4E88-860E-BCC479D2A823}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D7679BA8-3FCF-47F2-AC22-371C4BC742DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Bottlecap.Net.Notifications", "Tests\UnitTests.Bottlecap.Net.Notifications\UnitTests.Bottlecap.Net.Notifications.csproj", "{0A9EE39A-D721-461D-8237-24DD757CC272}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{E50CCEEA-4F25-41AE-847D-28E8CA97983D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bottlecap.Net.Notifications.ConsoleExample", "Examples\Bottlecap.Net.Notifications.ConsoleExample\Bottlecap.Net.Notifications.ConsoleExample.csproj", "{41BCA695-0D4E-4372-88F7-DDEC3B399112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +35,21 @@ Global
 		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4330B597-C0D8-4E88-860E-BCC479D2A823}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A9EE39A-D721-461D-8237-24DD757CC272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A9EE39A-D721-461D-8237-24DD757CC272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A9EE39A-D721-461D-8237-24DD757CC272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A9EE39A-D721-461D-8237-24DD757CC272}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41BCA695-0D4E-4372-88F7-DDEC3B399112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41BCA695-0D4E-4372-88F7-DDEC3B399112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41BCA695-0D4E-4372-88F7-DDEC3B399112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41BCA695-0D4E-4372-88F7-DDEC3B399112}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0A9EE39A-D721-461D-8237-24DD757CC272} = {D7679BA8-3FCF-47F2-AC22-371C4BC742DE}
+		{41BCA695-0D4E-4372-88F7-DDEC3B399112} = {E50CCEEA-4F25-41AE-847D-28E8CA97983D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {699C2753-6EEB-4989-B29A-DA6B2A5EA9F4}
