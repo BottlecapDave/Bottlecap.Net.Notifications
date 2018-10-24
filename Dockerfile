@@ -3,6 +3,11 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY src/Bottlecap.Net.Notifications/*.csproj ./Bottlecap.Net.Notifications/
+COPY src/Bottlecap.Net.Notifications.EF/*.csproj ./Bottlecap.Net.Notifications.EF/
+
+COPY src/Examples/Bottlecap.Net.Notifications.ConsoleExample/*.csproj ./Examples/Bottlecap.Net.Notifications.ConsoleExample/
+COPY src/Tests/UnitTests.Bottlecap.Net.Notifications/*.csproj ./Tests/UnitTests.Bottlecap.Net.Notifications/
+
 COPY src/Bottlecap.Net.Notifications.Transporters.SendGrid/*.csproj ./Bottlecap.Net.Notifications.Transporters.SendGrid/
 COPY src/*.sln ./
 RUN dotnet restore
