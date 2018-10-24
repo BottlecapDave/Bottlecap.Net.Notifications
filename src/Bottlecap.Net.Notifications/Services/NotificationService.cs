@@ -20,7 +20,7 @@ namespace Bottlecap.Net.Notifications.Services
             _options = options;
         }
 
-        public async Task<NotifyStatus> NotifyAsync()
+        public async Task<NotifyStatus> ExecuteAsync()
         {
             var notifications = await _repository.GetPendingNotificationsAsync();
             if (notifications != null)
@@ -34,7 +34,7 @@ namespace Bottlecap.Net.Notifications.Services
             return NotifyStatus.Successful;
         }
 
-        public async Task<NotifyStatus> NotifyAsync(string notificationType, object content, IUser user)
+        public async Task<NotifyStatus> ScheduleAndExecuteAsync(string notificationType, object content, IUser user)
         {
             var result = await ScheduleAsync(notificationType, content, user);
             if (result != null)
