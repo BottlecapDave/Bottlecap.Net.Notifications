@@ -42,6 +42,13 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
 
             var services = new ServiceCollection();
 
+            // Setup in memory Entity Framework
+            services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseInMemoryDatabase(databaseName: "memorydatabase");
+            });
+
+            // Setup transporter
             var emailTransporter = new SendGridTransporter(new SendGridOptions()
             {
                 ApiKey = sendGridApiToken,
@@ -51,14 +58,8 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
             new EmailNotificationRecipientResolver(toEmailAddress),
             templateIdResolver: new TemplateIdResolver(templateId));
 
-            // Setup in memory Entity Framework
-            services.AddDbContext<DatabaseContext>(options =>
-            {
-                options.UseInMemoryDatabase(databaseName: "memorydatabase");
-            });
-
             // Setup notifications
-            services.SetupEFNotificationService<DatabaseContext>(emailTransporter);
+            services.AddNotificationServiceWithEF<DatabaseContext>(transporters: emailTransporter);
 
             return services.BuildServiceProvider();
         }

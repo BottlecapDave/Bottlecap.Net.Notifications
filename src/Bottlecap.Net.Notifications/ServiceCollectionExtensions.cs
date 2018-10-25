@@ -8,9 +8,9 @@ namespace Bottlecap.Net.Notifications
 {
     public static class ServiceCollectionExtensions
     {
-        public static void SetupNotificationService<TNotificationRepository>(this IServiceCollection serviceCollection,
-                                                                             Action<NotificationServiceOptions> optionsBuilder,
-                                                                             params INotificationTransporter[] transporters)
+        public static void AddNotificationService<TNotificationRepository>(this IServiceCollection serviceCollection,
+                                                                           Action<NotificationServiceOptions> optionsBuilder = null,
+                                                                           params INotificationTransporter[] transporters)
             where TNotificationRepository : class, INotificationRepository
         {
             serviceCollection.AddScoped<INotificationRepository, TNotificationRepository>();
@@ -38,13 +38,6 @@ namespace Bottlecap.Net.Notifications
 
                 return manager;
             });
-        }
-
-        public static void SetupNotificationService<TNotificationRepository>(this IServiceCollection serviceCollection,
-                                                                             params INotificationTransporter[] transporters)
-            where TNotificationRepository : class, INotificationRepository
-        {
-            serviceCollection.SetupNotificationService<TNotificationRepository>(null, transporters);
         }
     }
 }
