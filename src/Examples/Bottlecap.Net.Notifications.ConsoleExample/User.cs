@@ -2,7 +2,7 @@
 
 namespace Bottlecap.Net.Notifications.ConsoleExample
 {
-    public class User : IUser
+    public class User
     {
     }
 }
