@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Services
 {
-    public interface INotificationService
+    public interface INotificationService<TRecipient>
     {
-        Task<INotificationData> ScheduleAsync(string notificationType, object content, IUser user);
+        Task<INotificationData> ScheduleAsync(INotificationContext context, TRecipient recipient);
         
-        Task<NotifyStatus> ScheduleAndExecuteAsync(string notificationType, object content, IUser user);
+        Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContext context, TRecipient recipient);
 
-        Task<NotifyStatus> ExecuteAsync();
+        Task<long> ExecuteAsync();
     }
 }

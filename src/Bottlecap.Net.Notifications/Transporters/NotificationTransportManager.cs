@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Bottlecap.Net.Notifications.Transporters
 {
-    public class NotificationTransportManager : INotificationTransportManager
+    public class NotificationTransportManager<TRecipient> : INotificationTransportManager<TRecipient>
     {
-        private readonly Dictionary<string, INotificationTransporter> _registeredTransporters = new Dictionary<string, INotificationTransporter>();
+        private readonly Dictionary<string, INotificationTransporter<TRecipient>> _registeredTransporters = new Dictionary<string, INotificationTransporter<TRecipient>>();
 
-        public INotificationTransporter Get(string transporterType)
+        public INotificationTransporter<TRecipient> Get(string transporterType)
         {
-            INotificationTransporter transporter;
+            INotificationTransporter<TRecipient> transporter;
             if (_registeredTransporters.TryGetValue(transporterType, out transporter) == false)
             {
                 throw new ArgumentException($"A transporter for transport type '{transporterType}' has not been registered");
@@ -18,12 +18,12 @@ namespace Bottlecap.Net.Notifications.Transporters
             return transporter;
         }
 
-        public IEnumerable<INotificationTransporter> GetTransporters()
+        public IEnumerable<INotificationTransporter<TRecipient>> GetTransporters()
         {
             return _registeredTransporters.Values;
         }
 
-        public void Register(INotificationTransporter transporter)
+        public void Register(INotificationTransporter<TRecipient> transporter)
         {
             if (_registeredTransporters.ContainsKey(transporter.TransporterType))
             {

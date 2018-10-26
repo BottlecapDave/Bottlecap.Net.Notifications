@@ -8,7 +8,7 @@ using Bottlecap.Net.Notifications.Transporters.Resolvers.Emails;
 
 namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 {
-    public class SendGridTransporter : INotificationTransporter
+    public class SendGridTransporter<TRecipient> : INotificationTransporter<TRecipient>
     {
         private readonly SendGridOptions _options;
         private readonly ITemplateContentResolver _templateContentResolver;
@@ -17,10 +17,10 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
         public string TransporterType {  get { return "Email"; } }
 
-        public Transporters.INotificationRecipientResolver RecipientResolver { get; private set; }
+        public Transporters.INotificationRecipientResolver<TRecipient> RecipientResolver { get; private set; }
 
         public SendGridTransporter(SendGridOptions options, 
-                                   INotificationRecipientResolver recipientResolver, 
+                                   INotificationRecipientResolver<TRecipient> recipientResolver, 
                                    ITemplateContentResolver templateContentResolver = null,
                                    ITemplateIdResolver templateIdResolver = null) :
             this (new SendGridClient(options.ApiKey), options, recipientResolver, templateContentResolver, templateIdResolver)
@@ -29,7 +29,7 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
         public SendGridTransporter(ISendGridClient client,
                                    SendGridOptions options,
-                                   INotificationRecipientResolver recipientResolver,
+                                   INotificationRecipientResolver<TRecipient> recipientResolver,
                                    ITemplateContentResolver templateContentResolver = null,
                                    ITemplateIdResolver templateIdResolver = null)
         {
@@ -46,7 +46,7 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
             RecipientResolver = recipientResolver;
         }
 
-        public async Task<bool> SendAsync(string notificationType, object recipients, object content)
+        public async Task<IEnumerable<string>> SendAsync(string notificationType, object recipients, object content)
         {
             var emailRecipients = recipients as EmailRecipients;
             if (recipients == null)
@@ -87,7 +87,12 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
             var response = await _client.SendEmailAsync(message);
             var responseBody = await response.Body.ReadAsStringAsync();
-            return response.StatusCode == System.Net.HttpStatusCode.OK;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return new string[0];
+            }
+
+            return new string[1] { responseBody };
         }
 
         private void AddRecipients(Action<string, string> addAddress, IEnumerable<string> addresses)

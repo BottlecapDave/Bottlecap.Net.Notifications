@@ -8,13 +8,13 @@ namespace Bottlecap.Net.Notifications
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddNotificationService<TNotificationRepository>(this IServiceCollection serviceCollection,
+        public static void AddNotificationService<TRecipient, TNotificationRepository>(this IServiceCollection serviceCollection,
                                                                            Action<NotificationServiceOptions> optionsBuilder = null,
-                                                                           params INotificationTransporter[] transporters)
+                                                                           params INotificationTransporter<TRecipient>[] transporters)
             where TNotificationRepository : class, INotificationRepository
         {
             serviceCollection.AddScoped<INotificationRepository, TNotificationRepository>();
-            serviceCollection.AddScoped<INotificationService>(factory =>
+            serviceCollection.AddScoped<INotificationService<TRecipient>>(factory =>
             {
                 var serviceOptions = new NotificationServiceOptions();
                 if (optionsBuilder != null)
@@ -22,15 +22,15 @@ namespace Bottlecap.Net.Notifications
                     optionsBuilder(serviceOptions);
                 }
 
-                var manager = new NotificationService(factory.GetService<INotificationRepository>(),
-                                                      factory.GetService<INotificationTransportManager>(),
+                var manager = new NotificationService<TRecipient>(factory.GetService<INotificationRepository>(),
+                                                      factory.GetService<INotificationTransportManager<TRecipient>>(),
                                                       serviceOptions);
 
                 return manager;
             });
-            serviceCollection.AddScoped<INotificationTransportManager>(factory =>
+            serviceCollection.AddScoped<INotificationTransportManager<TRecipient>>(factory =>
             {
-                var manager = new NotificationTransportManager();
+                var manager = new NotificationTransportManager<TRecipient>();
                 foreach (var transporter in transporters)
                 {
                     manager.Register(transporter);

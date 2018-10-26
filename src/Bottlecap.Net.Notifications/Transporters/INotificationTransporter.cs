@@ -1,13 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Transporters
 {
-    public interface INotificationTransporter
+    public interface INotificationTransporter<TRecipient>
     {
         string TransporterType { get; }
 
-        INotificationRecipientResolver RecipientResolver { get; }
+        INotificationRecipientResolver<TRecipient> RecipientResolver { get; }
 
-        Task<bool> SendAsync(string notificationType, object recipients, object content);
+        Task<IEnumerable<string>> SendAsync(string notificationType, object recipients, object content);
     }
 }

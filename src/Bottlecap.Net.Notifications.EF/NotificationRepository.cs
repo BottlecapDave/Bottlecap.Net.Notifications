@@ -47,7 +47,7 @@ namespace Bottlecap.Net.Notifications.EF
             .Take(MAXIMUM_NOTIFICATIONS_COUNT));
         }
 
-        public Task UpdateAsync(long id, NotificationState state, int retryCount, DateTime? nextExecutionTimestamp)
+        public Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
         {
             var data = _context.Notifications.FirstOrDefault(x => x.Id == id);
             if (data != null)

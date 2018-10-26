@@ -2,12 +2,12 @@
 
 namespace Bottlecap.Net.Notifications.Transporters
 {
-    public interface INotificationTransportManager
+    public interface INotificationTransportManager<TRecipient>
     {
-        void Register(INotificationTransporter transporter);
+        void Register(INotificationTransporter<TRecipient> transporter);
         
-        INotificationTransporter Get(string transportType);
+        INotificationTransporter<TRecipient> Get(string transportType);
 
-        IEnumerable<INotificationTransporter> GetTransporters();
+        IEnumerable<INotificationTransporter<TRecipient>> GetTransporters();
     }
 }

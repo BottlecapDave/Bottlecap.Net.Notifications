@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Transporters.Resolvers.Basic
 {
-    public interface IBasicNotificationRecipientExtractor : INotificationRecipientResolver
+    public interface IBasicNotificationRecipientExtractor<TRecipient> : INotificationRecipientResolver<TRecipient>
     {
-        new Task<string> ResolveAsync(IUser user, string notificationType, string transporterType);
+        new Task<string> ResolveAsync(TRecipient user, string notificationType, string transporterType);
     }
 }

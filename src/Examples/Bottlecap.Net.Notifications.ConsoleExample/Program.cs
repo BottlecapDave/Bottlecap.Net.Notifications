@@ -8,6 +8,14 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
 {
     public class Program
     {
+        private class NotificationContext : INotificationContext
+        {
+            public string NotificationType { get { return "test-notification-console"; } }
+            public NotificationContent Content { get; set; }
+
+            object INotificationContext.Content { get { return Content; } }
+        }
+
         private class NotificationContent
         {
             public string FirstName { get; set; }
@@ -19,16 +27,25 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
         {
             var services = Setup();
 
-            var notificationService = services.GetService<INotificationService>();
+            var notificationService = services.GetService<INotificationService<User>>();
 
-            //notificationService.ScheduleAndExecuteAsync("test-notification-console",
-            notificationService.ScheduleAndExecuteAsync("test-notification-console",
-                new NotificationContent()
+            // ScheduleAndExecuteAsync This should be called if you want to schedule the notification and attempt
+            // to send it straight away.
+            // notificationService.ScheduleAndExecuteAsync();
+
+            notificationService.ScheduleAsync(new NotificationContext()
             {
-                FirstName = "Hello",
-                LastName = "World"
+                Content = new NotificationContent()
+                {
+                    FirstName = "Hello",
+                    LastName = "World"
+                }
             },
             new User()).Wait();
+
+            // This should be called by a notification "service" whose purpose is to
+            // send notifications for failed notifications or notifications that have just been scheduled
+            notificationService.ExecuteAsync().Wait();
         }
 
         private static ServiceProvider Setup()
@@ -49,17 +66,17 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
             });
 
             // Setup transporter
-            var emailTransporter = new SendGridTransporter(new SendGridOptions()
+            var emailTransporter = new SendGridTransporter<User>(new SendGridOptions()
             {
                 ApiKey = sendGridApiToken,
                 FromEmailAddress = fromEmailAddress,
                 FromEmailName = fromEmailName
             },
-            new EmailNotificationRecipientResolver(toEmailAddress),
+            new EmailNotificationRecipientResolver<User>(toEmailAddress),
             templateIdResolver: new TemplateIdResolver(templateId));
 
             // Setup notifications
-            services.AddNotificationServiceWithEF<DatabaseContext>(transporters: emailTransporter);
+            services.AddNotificationServiceWithEF<User, DatabaseContext>(transporters: emailTransporter);
 
             return services.BuildServiceProvider();
         }

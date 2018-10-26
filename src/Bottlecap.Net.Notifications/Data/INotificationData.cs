@@ -15,6 +15,8 @@ namespace Bottlecap.Net.Notifications.Data
         object Content { get; set; }
 
         NotificationState State { get; set; }
+        
+        string FailureDetail { get; set; }
 
         int RetryCount { get; set; }
 

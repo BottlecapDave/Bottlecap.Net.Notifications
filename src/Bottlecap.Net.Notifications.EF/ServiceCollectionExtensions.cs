@@ -7,14 +7,14 @@ namespace Bottlecap.Net.Notifications.EF
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddNotificationServiceWithEF<TDataContext>(this IServiceCollection serviceCollection,
+        public static void AddNotificationServiceWithEF<TRecipient, TDataContext>(this IServiceCollection serviceCollection,
                                                                       Action<NotificationServiceOptions> options = null,
-                                                                      params INotificationTransporter[] transporters)
+                                                                      params INotificationTransporter<TRecipient>[] transporters)
             where TDataContext : class, IDataContext
         {
             serviceCollection.AddScoped<IDataContext>(service => service.GetService<TDataContext>());
 
-            Bottlecap.Net.Notifications.ServiceCollectionExtensions.AddNotificationService<NotificationRepository>(serviceCollection,
+            Bottlecap.Net.Notifications.ServiceCollectionExtensions.AddNotificationService<TRecipient, NotificationRepository>(serviceCollection,
                                                                                                                    options,
                                                                                                                    transporters);
         }

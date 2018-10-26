@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.ConsoleExample
 {
-    public class EmailNotificationRecipientResolver : IEmailNotificationRecipientResolver
+    public class EmailNotificationRecipientResolver<TRecipient> : IEmailNotificationRecipientResolver<TRecipient>
     {
         private string _emailAddress;
 
@@ -14,7 +14,7 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
             _emailAddress = emailAddress;
         }
 
-        public Task<EmailRecipients> ResolveAsync(IUser user, string notificationType, string transporterType)
+        public Task<EmailRecipients> ResolveAsync(TRecipient user, string notificationType, string transporterType)
         {
             return Task.FromResult(new EmailRecipients()
             {
@@ -22,7 +22,7 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
             });
         }
 
-        async Task<object> INotificationRecipientResolver.ResolveAsync(IUser user, string notificationType, string transporterType)
+        async Task<object> INotificationRecipientResolver<TRecipient>.ResolveAsync(TRecipient user, string notificationType, string transporterType)
         {
             return await ResolveAsync(user, notificationType, transporterType);
         }

@@ -60,6 +60,8 @@ namespace Bottlecap.Net.Notifications.EF
 
         public int RetryCount { get; set; }
 
+        public string FailureDetail { get; set; }
+
         public DateTime? NextExecutionTimestamp { get; set; }
 
         public DateTime CreationTimestamp { get; set; }

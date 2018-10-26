@@ -10,6 +10,6 @@ namespace Bottlecap.Net.Notifications.Data
 
         Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync();
 
-        Task UpdateAsync(long id, NotificationState state, int retryCount, DateTime? nextExecutionTimestamp);
+        Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp);
     }
 }
