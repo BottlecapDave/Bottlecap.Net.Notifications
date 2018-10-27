@@ -54,6 +54,7 @@ namespace Bottlecap.Net.Notifications.EF
             {
                 data.State = state;
                 data.RetryCount = retryCount;
+                data.FailureDetail = failureDetail;
                 data.NextExecutionTimestamp = nextExecutionTimestamp;
                 data.LastUpdatedTimestamp = DateTime.UtcNow;
 

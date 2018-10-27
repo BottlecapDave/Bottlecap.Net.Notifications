@@ -41,6 +41,15 @@ namespace Bottlecap.Net.Notifications.Services
 
         public async Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContext context, TRecipient recipient)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+            else if (recipient == null)
+            {
+                throw new ArgumentNullException(nameof(recipient));
+            }
+
             var result = await ScheduleAsync(context, recipient);
             if (result != null)
             {
@@ -52,12 +61,24 @@ namespace Bottlecap.Net.Notifications.Services
 
         public async Task<INotificationData> ScheduleAsync(INotificationContext context, TRecipient recipient)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+            else if (recipient == null)
+            {
+                throw new ArgumentNullException(nameof(recipient));
+            }
+
             foreach (var transporter in _manager.GetTransporters())
             {
-                var destination = await transporter.RecipientResolver.ResolveAsync(recipient, context.NotificationType, transporter.TransporterType);
-                if (destination != null)
-                {
-                    return await _repository.AddAsync(context.NotificationType, transporter.TransporterType, destination, context.Content);
+                if (transporter.RecipientResolver != null)        
+                { 
+                    var destination = await transporter.RecipientResolver.ResolveAsync(recipient, context.NotificationType, transporter.TransporterType);
+                    if (destination != null)
+                    {
+                        return await _repository.AddAsync(context.NotificationType, transporter.TransporterType, destination, context.Content);
+                    }
                 }
             }
 
