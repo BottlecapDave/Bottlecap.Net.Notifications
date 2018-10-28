@@ -1,9 +1,7 @@
 ﻿namespace Bottlecap.Net.Notifications
 {
-    public interface INotificationContext
+    public interface INotificationContent
     {
         string NotificationType { get; }
-
-        object Content { get; }
     }
 }

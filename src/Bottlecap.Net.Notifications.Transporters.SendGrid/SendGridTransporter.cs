@@ -8,10 +8,14 @@ using Bottlecap.Net.Notifications.Transporters.Resolvers.Emails;
 
 namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 {
+    /// <summary>
+    /// Transporter for sending notifications via SendGrid.
+    /// </summary>
+    /// <typeparam name="TRecipient"></typeparam>
     public class SendGridTransporter<TRecipient> : INotificationTransporter<TRecipient>
     {
         private readonly SendGridOptions _options;
-        private readonly ITemplateContentResolver _templateContentResolver;
+        private readonly IEmailResolver _templateContentResolver;
         private readonly ITemplateIdResolver _templateIdResolver;
         private readonly ISendGridClient _client;
 
@@ -20,17 +24,25 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
         public Transporters.INotificationRecipientResolver<TRecipient> RecipientResolver { get; private set; }
 
         public SendGridTransporter(SendGridOptions options, 
-                                   INotificationRecipientResolver<TRecipient> recipientResolver, 
-                                   ITemplateContentResolver templateContentResolver = null,
+                                   IEmailNotificationRecipientResolver<TRecipient> recipientResolver, 
+                                   IEmailResolver templateContentResolver = null,
                                    ITemplateIdResolver templateIdResolver = null) :
             this (new SendGridClient(options.ApiKey), options, recipientResolver, templateContentResolver, templateIdResolver)
         {
         }
 
+        /// <summary>
+        /// This constructor exists for mocking purposes only.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="options"></param>
+        /// <param name="recipientResolver"></param>
+        /// <param name="templateContentResolver"></param>
+        /// <param name="templateIdResolver"></param>
         public SendGridTransporter(ISendGridClient client,
                                    SendGridOptions options,
-                                   INotificationRecipientResolver<TRecipient> recipientResolver,
-                                   ITemplateContentResolver templateContentResolver = null,
+                                   IEmailNotificationRecipientResolver<TRecipient> recipientResolver,
+                                   IEmailResolver templateContentResolver = null,
                                    ITemplateIdResolver templateIdResolver = null)
         {
             if (templateContentResolver == null && templateIdResolver == null)

@@ -39,7 +39,7 @@ namespace Bottlecap.Net.Notifications.Services
             return totalSent;
         }
 
-        public async Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContext context, TRecipient recipient)
+        public async Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContent context, TRecipient recipient)
         {
             if (context == null)
             {
@@ -59,7 +59,7 @@ namespace Bottlecap.Net.Notifications.Services
             return NotifyStatus.Failed;
         }
 
-        public async Task<INotificationData> ScheduleAsync(INotificationContext context, TRecipient recipient)
+        public async Task<INotificationData> ScheduleAsync(INotificationContent context, TRecipient recipient)
         {
             if (context == null)
             {
@@ -74,10 +74,10 @@ namespace Bottlecap.Net.Notifications.Services
             {
                 if (transporter.RecipientResolver != null)        
                 { 
-                    var destination = await transporter.RecipientResolver.ResolveAsync(recipient, context.NotificationType, transporter.TransporterType);
+                    var destination = await transporter.RecipientResolver.ResolveAsync(recipient, context, transporter.TransporterType);
                     if (destination != null)
                     {
-                        return await _repository.AddAsync(context.NotificationType, transporter.TransporterType, destination, context.Content);
+                        return await _repository.AddAsync(context.NotificationType, transporter.TransporterType, destination, context);
                     }
                 }
             }

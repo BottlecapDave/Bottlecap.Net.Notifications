@@ -1,4 +1,5 @@
-﻿using Bottlecap.Net.Notifications.EF;
+﻿using Bottlecap.Net.Notifications.ConsoleExample.Configuration;
+using Bottlecap.Net.Notifications.EF;
 using Bottlecap.Net.Notifications.Services;
 using Bottlecap.Net.Notifications.Transporters.SendGrid;
 using Microsoft.EntityFrameworkCore;
@@ -8,21 +9,6 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
 {
     public class Program
     {
-        private class NotificationContext : INotificationContext
-        {
-            public string NotificationType { get { return "test-notification-console"; } }
-            public NotificationContent Content { get; set; }
-
-            object INotificationContext.Content { get { return Content; } }
-        }
-
-        private class NotificationContent
-        {
-            public string FirstName { get; set; }
-
-            public string LastName { get; set; }
-        }
-
         static void Main(string[] args)
         {
             var services = Setup();
@@ -33,15 +19,15 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
             // to send it straight away.
             // notificationService.ScheduleAndExecuteAsync();
 
-            notificationService.ScheduleAsync(new NotificationContext()
+            notificationService.ScheduleAsync(new TestNotification()
             {
-                Content = new NotificationContent()
-                {
-                    FirstName = "Hello",
-                    LastName = "World"
-                }
+                FirstName = "Hello",
+                LastName = "World"
             },
-            new User()).Wait();
+            new User()
+            {
+                EmailAddress = "" // ADD EMAIL ADDRESS WE'RE WANTING TO SEND OUR NOTIFICATION TO
+            }).Wait();
 
             // This should be called by a notification "service" whose purpose is to
             // send notifications for failed notifications or notifications that have just been scheduled
@@ -52,8 +38,7 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
         {
             var sendGridApiToken = ""; // ADD API TOKEN HERE
             var templateId = ""; // ADD SENDGRID TEMPLATE ID HERE
-
-            var toEmailAddress = ""; // ADD EMAIL ADDRESS HERE
+            
             var fromEmailAddress = ""; // ADD EMAIL ADDRESS HERE
             var fromEmailName = ""; // Add FROM NAME HERE
 
@@ -72,7 +57,7 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
                 FromEmailAddress = fromEmailAddress,
                 FromEmailName = fromEmailName
             },
-            new EmailNotificationRecipientResolver<User>(toEmailAddress),
+            new EmailNotificationRecipientResolver(),
             templateIdResolver: new TemplateIdResolver(templateId));
 
             // Setup notifications

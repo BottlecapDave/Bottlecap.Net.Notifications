@@ -37,6 +37,10 @@ RUN dotnet build ./Bottlecap.Net.Notifications.EF/ -c Release -o out /p:Version=
 # Pack EF
 RUN dotnet pack ./Bottlecap.Net.Notifications.EF/ -c Release -o out --no-build --no-restore /p:Version=$PACKAGE_VERSION
 
+# Run unit tests
+COPY src/Tests/UnitTests.Bottlecap.Net.Notifications/. ./Tests/UnitTests.Bottlecap.Net.Notifications/
+RUN dotnet test ./Tests/UnitTests.Bottlecap.Net.Notifications/ -c Release
+
 # Push all packages
 RUN dotnet nuget push ./Bottlecap.Net.Notifications/out/Bottlecap.Net.Notifications.$PACKAGE_VERSION.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API
 RUN dotnet nuget push ./Bottlecap.Net.Notifications.Transporters.SendGrid/out/Bottlecap.Net.Notifications.Transporters.SendGrid.$PACKAGE_VERSION.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API

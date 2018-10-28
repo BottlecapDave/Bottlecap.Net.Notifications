@@ -5,6 +5,6 @@ namespace Bottlecap.Net.Notifications.Transporters.Resolvers.Basic
 {
     public interface IBasicNotificationRecipientExtractor<TRecipient> : INotificationRecipientResolver<TRecipient>
     {
-        new Task<string> ResolveAsync(TRecipient user, string notificationType, string transporterType);
+        new Task<string> ResolveAsync(TRecipient recipient, INotificationContent notificationContent, string transporterType);
     }
 }
