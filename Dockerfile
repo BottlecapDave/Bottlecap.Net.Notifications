@@ -21,21 +21,21 @@ COPY src/Bottlecap.Net.Notifications/. ./Bottlecap.Net.Notifications/
 RUN dotnet build ./Bottlecap.Net.Notifications/ -c Release -o out /p:Version=$PACKAGE_VERSION
 
 # Pack notifications
-RUN dotnet pack ./Bottlecap.Net.Notifications/ -c Release -o out --no-build --no-restore /p:Version=$PACKAGE_VERSION
+RUN dotnet pack ./Bottlecap.Net.Notifications/ -c Release -o out /p:Version=$PACKAGE_VERSION
 
 # Copy all sendgrid and build
 COPY src/Bottlecap.Net.Notifications.Transporters.SendGrid/. ./Bottlecap.Net.Notifications.Transporters.SendGrid/
 RUN dotnet build ./Bottlecap.Net.Notifications.Transporters.SendGrid/ -c Release -o out /p:Version=$PACKAGE_VERSION
 
 # Pack sendgrid
-RUN dotnet pack ./Bottlecap.Net.Notifications.Transporters.SendGrid/ -c Release -o out --no-build --no-restore /p:Version=$PACKAGE_VERSION
+RUN dotnet pack ./Bottlecap.Net.Notifications.Transporters.SendGrid/ -c Release -o out /p:Version=$PACKAGE_VERSION
 
 # Copy all EF and build
 COPY src/Bottlecap.Net.Notifications.EF/. ./Bottlecap.Net.Notifications.EF/
 RUN dotnet build ./Bottlecap.Net.Notifications.EF/ -c Release -o out /p:Version=$PACKAGE_VERSION
 
 # Pack EF
-RUN dotnet pack ./Bottlecap.Net.Notifications.EF/ -c Release -o out --no-build --no-restore /p:Version=$PACKAGE_VERSION
+RUN dotnet pack ./Bottlecap.Net.Notifications.EF/ -c Release -o out /p:Version=$PACKAGE_VERSION
 
 # Run unit tests
 COPY src/Tests/UnitTests.Bottlecap.Net.Notifications/. ./Tests/UnitTests.Bottlecap.Net.Notifications/
