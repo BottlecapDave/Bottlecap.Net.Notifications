@@ -50,18 +50,24 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
                 options.UseInMemoryDatabase(databaseName: "memorydatabase");
             });
 
-            // Setup transporter
-            var emailTransporter = new SendGridTransporter<User>(new SendGridOptions()
-            {
-                ApiKey = sendGridApiToken,
-                FromEmailAddress = fromEmailAddress,
-                FromEmailName = fromEmailName
-            },
-            new EmailNotificationRecipientResolver(),
-            templateIdResolver: new TemplateIdResolver(templateId));
-
             // Setup notifications
-            services.AddNotificationServiceWithEF<User, DatabaseContext>(transporters: emailTransporter);
+            services.AddNotificationServiceWithEF<User, DatabaseContext>(options =>
+            {
+                // Setup options for NotificationService
+                options.MaximumRetryCount = 10;
+            },
+            factory =>
+            {
+                // Setup SendGrid transporter
+                return new SendGridTransporter<User>(new SendGridOptions()
+                {
+                    ApiKey = sendGridApiToken,
+                    FromEmailAddress = fromEmailAddress,
+                    FromEmailName = fromEmailName
+                },
+                new EmailNotificationRecipientResolver(),
+                templateIdResolver: new TemplateIdResolver(templateId));
+            });
 
             return services.BuildServiceProvider();
         }

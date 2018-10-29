@@ -98,7 +98,7 @@ namespace Bottlecap.Net.Notifications.Services
                 }
 
                 var errors = await transporter.SendAsync(data.NotificationType, data.Recipients, data.Content);
-                wasSuccessful = errors.Any() == false;
+                wasSuccessful = errors.Any(x => String.IsNullOrEmpty(x) == false) == false;
                 failureDetail = errors?.Aggregate((current, next) => $"{current}. {next}");
             }
             catch (System.Exception ex)
