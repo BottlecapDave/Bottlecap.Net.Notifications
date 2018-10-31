@@ -29,10 +29,10 @@ namespace Bottlecap.Net.Notifications.EF
                 RetryCount = 0
             };
 
-            await _context.Notifications.AddAsync(data);
+            var savedNotification = await _context.Notifications.AddAsync(data);
 
-            var result = await _context.SaveChangesAsync();
-            return result > 0 ? data : null;
+            var numberOfChanged = await _context.SaveChangesAsync();
+            return numberOfChanged > 0 ? savedNotification.Entity : null;
         }
 
         public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync()
@@ -47,7 +47,7 @@ namespace Bottlecap.Net.Notifications.EF
             .Take(MAXIMUM_NOTIFICATIONS_COUNT));
         }
 
-        public Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
+        public async Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
         {
             var data = _context.Notifications.FirstOrDefault(x => x.Id == id);
             if (data != null)
@@ -59,9 +59,9 @@ namespace Bottlecap.Net.Notifications.EF
                 data.LastUpdatedTimestamp = DateTime.UtcNow;
 
                 _context.Notifications.Update(data);
-            }
 
-            return Task.FromResult(true);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

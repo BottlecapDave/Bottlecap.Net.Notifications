@@ -91,6 +91,8 @@ namespace Bottlecap.Net.Notifications.Services
             var failureDetail = String.Empty;
             try
             {
+                await _repository.UpdateAsync(data.Id, NotificationState.Processing, data.RetryCount, data.FailureDetail, data.NextExecutionTimestamp);
+
                 var transporter = _manager.Get(data.TransportType);
                 if (transporter == null)
                 {
