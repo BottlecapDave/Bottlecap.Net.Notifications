@@ -49,7 +49,7 @@ namespace Bottlecap.Net.Notifications.EF
 
         public async Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
         {
-            var data = _context.Notifications.FirstOrDefault(x => x.Id == id);
+            var data = await _context.Notifications.FindAsync(id);
             if (data != null)
             {
                 data.State = state;

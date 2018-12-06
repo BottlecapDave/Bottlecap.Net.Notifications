@@ -13,6 +13,10 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
         {
             var services = Setup();
 
+            // turn off tracking so we can really see our recipients/content being recorded to the DB and extracted back out again.
+            var databaseContext = services.GetService<DatabaseContext>();
+            databaseContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
             var notificationService = services.GetService<INotificationService<User>>();
 
             // ScheduleAndExecuteAsync This should be called if you want to schedule the notification and attempt
