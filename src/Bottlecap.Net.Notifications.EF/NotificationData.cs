@@ -22,11 +22,17 @@ namespace Bottlecap.Net.Notifications.EF
         {
             get
             {
-                return JsonConvert.SerializeObject(this.Recipients);
+                return JsonConvert.SerializeObject(this.Recipients, new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
             }
             set
             {
-                this.Recipients = JsonConvert.DeserializeObject(value);
+                this.Recipients = JsonConvert.DeserializeObject(value, new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
             }
         }
 
@@ -39,11 +45,17 @@ namespace Bottlecap.Net.Notifications.EF
         {
             get
             {
-                return JsonConvert.SerializeObject(this.Content);
+                return JsonConvert.SerializeObject(this.Content, new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
             }
             set
             {
-                this.Content = JsonConvert.DeserializeObject(value);
+                this.Content = JsonConvert.DeserializeObject(value, new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
             }
         }
         
