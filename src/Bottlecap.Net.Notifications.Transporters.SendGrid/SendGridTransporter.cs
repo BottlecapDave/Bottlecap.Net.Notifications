@@ -61,7 +61,7 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
         public async Task<IEnumerable<string>> SendAsync(string notificationType, object recipients, object content)
         {
             var emailRecipients = recipients as EmailRecipients;
-            if (recipients == null)
+            if (emailRecipients == null)
             {
                 throw new ArgumentException("Recipients was not of type 'EmailRecipients'");
             }
