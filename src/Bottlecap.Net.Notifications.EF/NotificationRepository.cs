@@ -44,7 +44,8 @@ namespace Bottlecap.Net.Notifications.EF
                 )
             )
             .OrderBy(x => x.LastUpdatedTimestamp)
-            .Take(MAXIMUM_NOTIFICATIONS_COUNT));
+            .Take(MAXIMUM_NOTIFICATIONS_COUNT)
+            .ToArray());
         }
 
         public async Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
