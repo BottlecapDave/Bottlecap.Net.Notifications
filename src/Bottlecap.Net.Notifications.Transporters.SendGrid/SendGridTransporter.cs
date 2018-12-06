@@ -25,9 +25,15 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
 
         public SendGridTransporter(SendGridOptions options, 
                                    IEmailNotificationRecipientResolver<TRecipient> recipientResolver, 
-                                   IEmailResolver templateContentResolver = null,
-                                   ITemplateIdResolver templateIdResolver = null) :
-            this (new SendGridClient(options.ApiKey), options, recipientResolver, templateContentResolver, templateIdResolver)
+                                   IEmailResolver templateContentResolver) :
+            this (new SendGridClient(options.ApiKey), options, recipientResolver, templateContentResolver)
+        {
+        }
+
+        public SendGridTransporter(SendGridOptions options,
+                                   IEmailNotificationRecipientResolver<TRecipient> recipientResolver,
+                                   ITemplateIdResolver templateIdResolver) :
+            this(new SendGridClient(options.ApiKey), options, recipientResolver, templateIdResolver)
         {
         }
 
@@ -42,16 +48,29 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
         public SendGridTransporter(ISendGridClient client,
                                    SendGridOptions options,
                                    IEmailNotificationRecipientResolver<TRecipient> recipientResolver,
-                                   IEmailResolver templateContentResolver = null,
-                                   ITemplateIdResolver templateIdResolver = null)
+                                   IEmailResolver templateContentResolver)
         {
-            if (templateContentResolver == null && templateIdResolver == null)
-            {
-                throw new ArgumentNullException("Either a template content resolver or template id resolver must be supplied");
-            }
-
             _options = options;
             _templateContentResolver = templateContentResolver;
+            _client = client;
+
+            RecipientResolver = recipientResolver;
+        }
+
+        /// <summary>
+        /// This constructor exists for mocking purposes only.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="options"></param>
+        /// <param name="recipientResolver"></param>
+        /// <param name="templateContentResolver"></param>
+        /// <param name="templateIdResolver"></param>
+        public SendGridTransporter(ISendGridClient client,
+                                   SendGridOptions options,
+                                   IEmailNotificationRecipientResolver<TRecipient> recipientResolver,
+                                   ITemplateIdResolver templateIdResolver)
+        {
+            _options = options;
             _templateIdResolver = templateIdResolver;
             _client = client;
 
