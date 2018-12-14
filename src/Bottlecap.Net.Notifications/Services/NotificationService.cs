@@ -3,6 +3,7 @@ using Bottlecap.Net.Notifications.Transporters;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Bottlecap.Net.Notifications.Services
 {
@@ -50,39 +51,56 @@ namespace Bottlecap.Net.Notifications.Services
                 throw new ArgumentNullException(nameof(recipient));
             }
 
-            var result = await ScheduleAsync(context, recipient);
-            if (result != null)
+            var notifications = await ScheduleAsync(context, recipient);
+            if (notifications != null)
             {
-                return await NotifyAsync(result);
+                var result = NotifyStatus.Successful;
+                foreach (var notification in notifications)
+                {
+                    // If we've failed to notify our notification, then we'll tell the caller that all notifications are scheduled.
+                    if (await NotifyAsync(notification) != NotifyStatus.Successful)
+                    {
+                        result = NotifyStatus.Scheduled;
+                    }
+                }
+
+                return result;
             }
 
             return NotifyStatus.Failed;
         }
 
-        public async Task<INotificationData> ScheduleAsync(INotificationContent context, TRecipient recipient)
+        public async Task<IEnumerable<INotificationData>> ScheduleAsync(INotificationContent content, TRecipient recipient)
         {
-            if (context == null)
+            if (content == null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(content));
             }
             else if (recipient == null)
             {
                 throw new ArgumentNullException(nameof(recipient));
             }
 
+            var notificationsToAdd = new List<CreatableNotification>();
             foreach (var transporter in _manager.GetTransporters())
             {
                 if (transporter.RecipientResolver != null)        
                 { 
-                    var destination = await transporter.RecipientResolver.ResolveAsync(recipient, context, transporter.TransporterType);
+                    var destination = await transporter.RecipientResolver.ResolveAsync(recipient, content, transporter.TransporterType);
                     if (destination != null)
                     {
-                        return await _repository.AddAsync(context.NotificationType, transporter.TransporterType, destination, context);
+                        notificationsToAdd.Add(new CreatableNotification()
+                        {
+                            NotificationType = content.NotificationType,
+                            TransportType = transporter.TransporterType,
+                            Recipients = destination,
+                            Content = content
+                        });
                     }
                 }
             }
 
-            return null;
+            return notificationsToAdd.Count > 0 ? await _repository.AddAsync(notificationsToAdd) : new INotificationData[0];
         }
 
         private async Task<NotifyStatus> NotifyAsync(INotificationData data)

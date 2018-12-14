@@ -6,7 +6,7 @@ namespace Bottlecap.Net.Notifications.Data
 {
     public interface INotificationRepository
     {
-        Task<INotificationData> AddAsync(string notificationType, string transportType, object recipients, object content);
+        Task<IEnumerable<INotificationData>> AddAsync(IEnumerable<CreatableNotification> notifications);
 
         Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync();
 

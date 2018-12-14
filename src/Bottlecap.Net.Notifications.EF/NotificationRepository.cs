@@ -15,24 +15,27 @@ namespace Bottlecap.Net.Notifications.EF
         {
             _context = context;
         }
-
-        public async Task<INotificationData> AddAsync(string notificationType, string transportType, object recipients, object content)
+        
+        public async Task<IEnumerable<INotificationData>> AddAsync(IEnumerable<CreatableNotification> notifications)
         {
-            var data = new NotificationData()
+            var data = notifications.Select(notification =>
             {
-                Content = content,
-                CreationTimestamp = DateTime.UtcNow,
-                NotificationType = notificationType,
-                TransportType = transportType,
-                State = NotificationState.Created,
-                Recipients = recipients,
-                RetryCount = 0
-            };
+                return new NotificationData()
+                {
+                    Content = notification.Content,
+                    CreationTimestamp = DateTime.UtcNow,
+                    NotificationType = notification.NotificationType,
+                    TransportType = notification.TransportType,
+                    State = NotificationState.Created,
+                    Recipients = notification.Recipients,
+                    RetryCount = 0
+                };
+            });
 
-            var savedNotification = await _context.Notifications.AddAsync(data);
+            await _context.Notifications.AddRangeAsync(data);
 
             var numberOfChanged = await _context.SaveChangesAsync();
-            return numberOfChanged > 0 ? savedNotification.Entity : null;
+            return numberOfChanged > 0 ? data : null;
         }
 
         public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync()

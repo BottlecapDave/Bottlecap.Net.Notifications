@@ -1,4 +1,5 @@
 ﻿using Bottlecap.Net.Notifications.Data;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Bottlecap.Net.Notifications.Services
@@ -17,8 +18,8 @@ namespace Bottlecap.Net.Notifications.Services
         /// </summary>
         /// <param name="context">The context of the notification including the notification type and any related data.</param>
         /// <param name="recipient">The recipient the notification is to be sent to</param>
-        /// <returns>The notification record that was created.</returns>
-        Task<INotificationData> ScheduleAsync(INotificationContent context, TRecipient recipient);
+        /// <returns>The collection of notification records that were created.</returns>
+        Task<IEnumerable<INotificationData>> ScheduleAsync(INotificationContent context, TRecipient recipient);
 
         /// <summary>
         /// Schedule the provided notification for all applicable transporters for the provided recipient and attempt to send them straight away.
