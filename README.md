@@ -1,4 +1,6 @@
 # Bottlecap.Net.Notifications
+![Nuget](https://img.shields.io/nuget/v/bottlecap.net.notifications.svg)
+
 Bottlecap.Net.Notifications is a component built to support sending notifications quickly. It's main features are
 * Plugable transport mechanisms
 * Ability to retry failed notifications
@@ -13,7 +15,10 @@ This represents a transport mechanism. This is where notifications will be sent 
 Its responsibility is to send the provided notification, potentially converting the notification into something that can be sent before hand. For example, an email based transporter might take the provided content and merge it into an email template associated with the notification.
 
 Currently, there are implementations for the following services
-* [SendGrid](./src/Bottlecap.Net.Notifications.Transporters.SendGrid/readme.md)
+
+| Transporter | Package | Nuget Version |
+|-------------|---------|---------------|
+| [SendGrid](./src/Bottlecap.Net.Notifications.Transporters.SendGrid/readme.md) | Bottlecap.Net.Notifications.Transporters.SendGrid | ![Nuget](https://img.shields.io/nuget/v/bottlecap.net.notifications.transporters.sendgrid.svg) |
 
 ## INotificationRecipientResolver
 Used to resolve the provided recipient into a recipient object the associated transporter can understand. For example, an email based transporter will use this to resolve the recipient into a collection of email addresses.
@@ -47,6 +52,8 @@ Service collection extension for adding the notification service and dependencie
 Can be found in **Bottlecap.Net.Notifications** namespace/package.
 
 ### AddNotificationServiceWithEF
+
+![Nuget](https://img.shields.io/nuget/v/bottlecap.net.notifications.ef.svg)
 
 Service collection extension for adding the notification service and dependencies where EntityFramework is used for storage and retrieval of notifications.
 
