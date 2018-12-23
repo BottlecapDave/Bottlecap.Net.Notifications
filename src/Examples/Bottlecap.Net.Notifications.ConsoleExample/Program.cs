@@ -35,7 +35,11 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
 
             // This should be called by a notification "service" whose purpose is to
             // send notifications for failed notifications or notifications that have just been scheduled
-            notificationService.ExecuteAsync().Wait();
+            var numberOfNotificationsExecuted = notificationService.ExecuteAsync().Result;
+            if (numberOfNotificationsExecuted < 1)
+            {
+                throw new System.InvalidOperationException("Failed to execute notifications");
+            }
         }
 
         private static ServiceProvider Setup()
@@ -59,6 +63,7 @@ namespace Bottlecap.Net.Notifications.ConsoleExample
             {
                 // Setup options for NotificationService
                 options.MaximumRetryCount = 10;
+                options.PendingNotificationOffsetInSeconds = 0;
             },
             factory =>
             {

@@ -73,7 +73,7 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
                                    ITemplateIdResolver templateIdResolver)
             : this(client, options, recipientResolver)
         {
-            if (_templateIdResolver == null)
+            if (templateIdResolver == null)
             {
                 throw new ArgumentNullException(nameof(_templateIdResolver));
             }

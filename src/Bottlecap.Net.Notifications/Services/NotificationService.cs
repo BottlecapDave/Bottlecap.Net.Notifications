@@ -25,7 +25,8 @@ namespace Bottlecap.Net.Notifications.Services
         public async Task<long> ExecuteAsync()
         {
             var totalSent = 0;
-            var notifications = await _repository.GetPendingNotificationsAsync();
+            var latestPendingCreationTimestamp = DateTime.UtcNow.AddSeconds(Math.Abs(_options.PendingNotificationOffsetInSeconds) * -1);
+            var notifications = await _repository.GetPendingNotificationsAsync(latestPendingCreationTimestamp);
             if (notifications != null)
             {
                 foreach (var item in notifications)

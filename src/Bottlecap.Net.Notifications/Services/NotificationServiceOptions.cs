@@ -8,10 +8,13 @@
 
         public int RetryCoolDownMagnitude { get; set; }
 
+        public int PendingNotificationOffsetInSeconds { get; set; }
+
         public NotificationServiceOptions()
         {
             RetryCoolDownInSeconds = 60;
             RetryCoolDownMagnitude = 1;
+            PendingNotificationOffsetInSeconds = 60;
         }
     }
 }

@@ -38,11 +38,12 @@ namespace Bottlecap.Net.Notifications.EF
             return numberOfChanged > 0 ? data : null;
         }
 
-        public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync()
+        public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync(DateTime latestCreationTimestamp)
         {
             return Task.FromResult<IEnumerable<INotificationData>>(_context.Notifications.Where(x => 
                 (
                     (x.State == NotificationState.Created || x.State == NotificationState.WaitingForRetry || x.State == NotificationState.TransporterNotFound) &&
+                    x.CreationTimestamp <= latestCreationTimestamp &&
                     (x.NextExecutionTimestamp == null || x.NextExecutionTimestamp <= DateTime.UtcNow)
                 )
             )
