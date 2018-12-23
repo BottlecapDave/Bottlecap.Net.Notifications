@@ -40,18 +40,18 @@ namespace Bottlecap.Net.Notifications.Services
             return totalSent;
         }
 
-        public async Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContent context, TRecipient recipient)
+        public async Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContent content, TRecipient recipient)
         {
-            if (context == null)
+            if (content == null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(content));
             }
             else if (recipient == null)
             {
                 throw new ArgumentNullException(nameof(recipient));
             }
 
-            var notifications = await ScheduleAsync(context, recipient);
+            var notifications = await ScheduleAsync(content, recipient);
             if (notifications != null)
             {
                 var result = NotifyStatus.Successful;

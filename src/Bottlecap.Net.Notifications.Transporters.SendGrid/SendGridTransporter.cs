@@ -49,12 +49,14 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
                                    SendGridOptions options,
                                    IEmailNotificationRecipientResolver<TRecipient> recipientResolver,
                                    IEmailResolver templateContentResolver)
+            : this(client, options, recipientResolver)
         {
-            _options = options;
+            if (templateContentResolver == null)
+            {
+                throw new ArgumentNullException(nameof(templateContentResolver));
+            }
+            
             _templateContentResolver = templateContentResolver;
-            _client = client;
-
-            RecipientResolver = recipientResolver;
         }
 
         /// <summary>
@@ -69,11 +71,35 @@ namespace Bottlecap.Net.Notifications.Transporters.SendGrid
                                    SendGridOptions options,
                                    IEmailNotificationRecipientResolver<TRecipient> recipientResolver,
                                    ITemplateIdResolver templateIdResolver)
+            : this(client, options, recipientResolver)
         {
-            _options = options;
-            _templateIdResolver = templateIdResolver;
-            _client = client;
+            if (_templateIdResolver == null)
+            {
+                throw new ArgumentNullException(nameof(_templateIdResolver));
+            }
 
+            _templateIdResolver = templateIdResolver;
+        }
+
+        protected SendGridTransporter(ISendGridClient client,
+                                      SendGridOptions options,
+                                      IEmailNotificationRecipientResolver<TRecipient> recipientResolver)
+        {
+            if (client == null)
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
+            else if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+            else if (recipientResolver == null)
+            {
+                throw new ArgumentNullException(nameof(recipientResolver));
+            }
+
+            _options = options;
+            _client = client;
             RecipientResolver = recipientResolver;
         }
 

@@ -16,20 +16,20 @@ namespace Bottlecap.Net.Notifications.Services
         /// The purpose of this is that the scheduled notification will be executed at a later date by an
         /// external service.
         /// </summary>
-        /// <param name="context">The context of the notification including the notification type and any related data.</param>
+        /// <param name="content">The content of the notification including the notification type and any related data.</param>
         /// <param name="recipient">The recipient the notification is to be sent to</param>
         /// <returns>The collection of notification records that were created.</returns>
-        Task<IEnumerable<INotificationData>> ScheduleAsync(INotificationContent context, TRecipient recipient);
+        Task<IEnumerable<INotificationData>> ScheduleAsync(INotificationContent content, TRecipient recipient);
 
         /// <summary>
         /// Schedule the provided notification for all applicable transporters for the provided recipient and attempt to send them straight away.
         /// 
         /// This method should be used if you want the notifications to ideally be sent at the point of calling it.
         /// </summary>
-        /// <param name="context">The context of the notification including the notification type and any related data.</param>
+        /// <param name="content">The content of the notification including the notification type and any related data.</param>
         /// <param name="recipient">The recipient the notification is to be sent to</param>
         /// <returns>The status of the creation and sending of the notification.</returns>
-        Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContent context, TRecipient recipient);
+        Task<NotifyStatus> ScheduleAndExecuteAsync(INotificationContent content, TRecipient recipient);
 
         /// <summary>
         /// Attempt to send any scheduled notifications using their specified transporters.

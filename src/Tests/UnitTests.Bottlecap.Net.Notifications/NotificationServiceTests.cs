@@ -381,6 +381,181 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
         #endregion
 
+        #region ScheduleAndExecuteAsync
+
+        [Fact]
+        public async Task ScheduleAndExecuteAsync_When_ContentIsNull_Then_ArgumentNullExceptionThrown()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            var recipient = new Recipient();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => mock.Service.ScheduleAndExecuteAsync(null, recipient));
+        }
+
+        [Fact]
+        public async Task ScheduleAndExecuteAsync_When_RecipientIsNull_Then_ArgumentNullExceptionThrown()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            var content = new NotificationContent();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => mock.Service.ScheduleAndExecuteAsync(content, null));
+        }
+
+        [Fact]
+        public async Task ScheduleAndExecuteAsync_When_NotificationNotCreated_Then_SuccessfulReturned()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            var recipient = new Recipient();
+            var content = new NotificationContent();
+
+            // Act
+            var result = await mock.Service.ScheduleAndExecuteAsync(content, recipient);
+        
+            // Assert
+            Assert.Equal(NotifyStatus.Successful, result);
+        }
+
+        [Fact]
+        public async Task ScheduleAndExecuteAsync_When_NotificationCreated_NotificationNotSent_Then_ScheduledReturned()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            var recipient = new Recipient();
+            var content = new NotificationContent();
+
+            var resolverResult = new ResolverResult()
+            {
+                ToAddress = "test@test.com"
+            };
+
+            var expectedAddedNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+                {
+                    TransportType = mock.MockNotificationTransporter.Object.TransporterType
+                }
+            };
+
+            mock.SetupTransporters();
+            mock.MockNotificationRecipientResolver.Setup(x => x.ResolveAsync(recipient, content, mock.MockNotificationTransporter.Object.TransporterType))
+                                                  .Returns(Task.FromResult<object>(resolverResult));
+
+
+            mock.MockNotificationRepository.Setup(x => x.AddAsync(It.Is<IEnumerable<CreatableNotification>>((creatables) => creatables.Count() == 1 &&
+                                                                                                                            creatables.FirstOrDefault(item => item.TransportType == mock.MockNotificationTransporter.Object.TransporterType &&
+                                                                                                                                                              item.Recipients == resolverResult &&
+                                                                                                                                                              item.NotificationType == content.NotificationType &&
+                                                                                                                                                              item.Content == content) != null)))
+                                           .Returns(Task.FromResult<IEnumerable<INotificationData>>(expectedAddedNotifications));
+
+            var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
+
+            mock.MockNotificationTransporter.Setup(x => x.SendAsync(expectedAddedNotifications[0].NotificationType, 
+                                                                    expectedAddedNotifications[0].Recipients, 
+                                                                    expectedAddedNotifications[0].Content))
+                                            .Callback(() => throw new SystemException());
+
+            // Act
+            var result = await mock.Service.ScheduleAndExecuteAsync(content, recipient);
+        
+            // Assert
+            Assert.Equal(NotifyStatus.Scheduled, result);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(expectedAddedNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      0,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(expectedAddedNotifications[0].Id,
+                                                                      NotificationState.WaitingForRetry,
+                                                                      1,
+                                                                      It.IsAny<string>(),
+                                                                      It.Is<DateTime>((value) => value >= expectedNextSchedule)),
+                                                    Times.Once);
+
+
+            mock.MockNotificationTransporter.Verify(x => x.SendAsync(expectedAddedNotifications[0].NotificationType,
+                                                                     expectedAddedNotifications[0].Recipients,
+                                                                     expectedAddedNotifications[0].Content),
+                                                    Times.Once);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ScheduleAndExecuteAsync_When_NotificationCreated_NotificationSent_Then_SuccessfulReturned(bool isErrorsCollectionNull)
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            var recipient = new Recipient();
+            var content = new NotificationContent();
+
+            var resolverResult = new ResolverResult()
+            {
+                ToAddress = "test@test.com"
+            };
+
+            var expectedAddedNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+                {
+                    TransportType = mock.MockNotificationTransporter.Object.TransporterType
+                }
+            };
+
+            mock.SetupTransporters();
+            mock.MockNotificationRecipientResolver.Setup(x => x.ResolveAsync(recipient, content, mock.MockNotificationTransporter.Object.TransporterType))
+                                                  .Returns(Task.FromResult<object>(resolverResult));
+
+
+            mock.MockNotificationRepository.Setup(x => x.AddAsync(It.Is<IEnumerable<CreatableNotification>>((creatables) => creatables.Count() == 1 &&
+                                                                                                                            creatables.FirstOrDefault(item => item.TransportType == mock.MockNotificationTransporter.Object.TransporterType &&
+                                                                                                                                                              item.Recipients == resolverResult &&
+                                                                                                                                                              item.NotificationType == content.NotificationType &&
+                                                                                                                                                              item.Content == content) != null)))
+                                           .Returns(Task.FromResult<IEnumerable<INotificationData>>(expectedAddedNotifications));
+
+            mock.MockNotificationTransporter.Setup(x => x.SendAsync(expectedAddedNotifications[0].NotificationType, 
+                                                                    expectedAddedNotifications[0].Recipients, 
+                                                                    expectedAddedNotifications[0].Content))
+                                            .Returns(Task.FromResult<IEnumerable<string>>(isErrorsCollectionNull ? null : new string[0]));
+
+            // Act
+            var result = await mock.Service.ScheduleAndExecuteAsync(content, recipient);
+        
+            // Assert
+            Assert.Equal(NotifyStatus.Successful, result);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(expectedAddedNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      0,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(expectedAddedNotifications[0].Id,
+                                                                      NotificationState.Successful,
+                                                                      0,
+                                                                      null,
+                                                                      null),
+                                                    Times.Once);
+
+
+            mock.MockNotificationTransporter.Verify(x => x.SendAsync(expectedAddedNotifications[0].NotificationType,
+                                                                     expectedAddedNotifications[0].Recipients,
+                                                                     expectedAddedNotifications[0].Content),
+                                                    Times.Once);
+        }
+
+        #endregion
+
         public class Recipient
         {
 
