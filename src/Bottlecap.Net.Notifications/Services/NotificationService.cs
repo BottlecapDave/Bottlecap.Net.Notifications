@@ -84,19 +84,21 @@ namespace Bottlecap.Net.Notifications.Services
             var notificationsToAdd = new List<CreatableNotification>();
             foreach (var transporter in _manager.GetTransporters())
             {
-                if (transporter.RecipientResolver != null)        
-                { 
-                    var destination = await transporter.RecipientResolver.ResolveAsync(recipient, content, transporter.TransporterType);
-                    if (destination != null)
+                if (transporter.RecipientResolver == null)        
+                {
+                    throw new InvalidOperationException($"'{transporter.GetType().Name}' does not have a valid resolver");
+                }
+
+                var destination = await transporter.RecipientResolver.ResolveAsync(recipient, content, transporter.TransporterType);
+                if (destination != null)
+                {
+                    notificationsToAdd.Add(new CreatableNotification()
                     {
-                        notificationsToAdd.Add(new CreatableNotification()
-                        {
-                            NotificationType = content.NotificationType,
-                            TransportType = transporter.TransporterType,
-                            Recipients = destination,
-                            Content = content
-                        });
-                    }
+                        NotificationType = content.NotificationType,
+                        TransportType = transporter.TransporterType,
+                        Recipients = destination,
+                        Content = content
+                    });
                 }
             }
 
