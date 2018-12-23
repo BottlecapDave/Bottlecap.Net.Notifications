@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Bottlecap.Net.Notifications
 {
     [Serializable]
-    internal class TransporterNotFoundException : Exception
+    public class TransporterNotFoundException : Exception
     {
         public TransporterNotFoundException()
         {

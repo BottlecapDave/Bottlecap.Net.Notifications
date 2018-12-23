@@ -102,7 +102,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             var expectedAddedNotifications = new INotificationData[]
             {
-                new NotificationData()
+                new MockNotificationData()
             };
 
             mock.SetupTransporters();
@@ -130,6 +130,257 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
         #endregion
 
+        #region ExecuteAsync
+
+        [Fact]
+        public async Task ExecuteAsync_When_NoNotificationsPresent_Then_ZeroReturned()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync()).Returns(Task.FromResult<IEnumerable<INotificationData>>(null));
+
+            // Act
+            var result = await mock.Service.ExecuteAsync();
+
+            // Assert
+            Assert.Equal(0, result);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_When_TransporterNotFound_Then_TransporterNotFoundExceptionThrown()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            var pendingNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+            };
+
+            var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
+
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync()).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<TransporterNotFoundException>(() => mock.Service.ExecuteAsync());
+
+            // Assert
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(), Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      0,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id,
+                                                                      NotificationState.WaitingForRetry,
+                                                                      1,
+                                                                      It.IsAny<string>(),
+                                                                      It.Is<DateTime>((value) => value >= expectedNextSchedule)),
+                                                    Times.Once);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_When_ExceptionThrown_Then_NotificationUpdatedWithWaitingForRetry()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            mock.SetupTransporters();
+            var pendingNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+                {
+                    TransportType = mock.MockNotificationTransporter.Object.TransporterType
+                }
+            };
+
+            var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
+
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync()).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+            mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
+                                            .Callback(() => throw new SystemException());
+
+            // Act
+            var result = await mock.Service.ExecuteAsync();
+
+            // Assert
+            Assert.Equal(0, result);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(), Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      0,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id,
+                                                                      NotificationState.WaitingForRetry,
+                                                                      1,
+                                                                      It.IsAny<string>(),
+                                                                      It.Is<DateTime>((value) => value >= expectedNextSchedule)),
+                                                    Times.Once);
+
+
+            mock.MockNotificationTransporter.Verify(x => x.SendAsync(pendingNotifications[0].NotificationType,
+                                                                     pendingNotifications[0].Recipients,
+                                                                     pendingNotifications[0].Content),
+                                                    Times.Once);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_When_TransporterSendReportsErrors_Then_NotificationUpdatedWithWaitingForRetry()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            mock.SetupTransporters();
+            var pendingNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+                {
+                    TransportType = mock.MockNotificationTransporter.Object.TransporterType
+                }
+            };
+
+            var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
+
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync()).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+
+            var transporterErrors = new string[] { "error" };
+            mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
+                                            .Returns(Task.FromResult<IEnumerable<string>>(transporterErrors));
+
+            // Act
+            var result = await mock.Service.ExecuteAsync();
+
+            // Assert
+            Assert.Equal(0, result);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(), Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      0,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id,
+                                                                      NotificationState.WaitingForRetry,
+                                                                      1,
+                                                                      transporterErrors[0],
+                                                                      It.Is<DateTime>((value) => value >= expectedNextSchedule)),
+                                                    Times.Once);
+
+
+            mock.MockNotificationTransporter.Verify(x => x.SendAsync(pendingNotifications[0].NotificationType,
+                                                                     pendingNotifications[0].Recipients,
+                                                                     pendingNotifications[0].Content),
+                                                    Times.Once);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_When_TransporterErrorsMaximumAmount_Then_NotificationUpdatedWithFailed()
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            mock.Options.MaximumRetryCount = 1;
+            mock.SetupTransporters();
+            var pendingNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+                {
+                    TransportType = mock.MockNotificationTransporter.Object.TransporterType,
+                    RetryCount = 1
+                }
+            };
+
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync()).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+
+            var transporterErrors = new string[] { "error" };
+            mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
+                                            .Returns(Task.FromResult<IEnumerable<string>>(transporterErrors));
+
+            // Act
+            var result = await mock.Service.ExecuteAsync();
+
+            // Assert
+            Assert.Equal(0, result);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(), Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      1,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id,
+                                                                      NotificationState.Failed,
+                                                                      1,
+                                                                      transporterErrors[0],
+                                                                      null),
+                                                    Times.Once);
+
+
+            mock.MockNotificationTransporter.Verify(x => x.SendAsync(pendingNotifications[0].NotificationType,
+                                                                     pendingNotifications[0].Recipients,
+                                                                     pendingNotifications[0].Content),
+                                                    Times.Once);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ExecuteAsync_When_TransporterSendIsSuccessful_Then_NotificationUpdatedWithSuccessful(bool isErrorsCollectionNull)
+        {
+            // Arrange
+            var mock = new MockNotificationService();
+            mock.Options.MaximumRetryCount = 1;
+            mock.SetupTransporters();
+            var pendingNotifications = new INotificationData[]
+            {
+                new MockNotificationData()
+                {
+                    TransportType = mock.MockNotificationTransporter.Object.TransporterType
+                }
+            };
+
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync()).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+
+            mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
+                                            .Returns(Task.FromResult<IEnumerable<string>>(isErrorsCollectionNull ? null : new string[0]));
+
+            // Act
+            var result = await mock.Service.ExecuteAsync();
+
+            // Assert
+            Assert.Equal(1, result);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(), Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
+                                                                      NotificationState.Processing,
+                                                                      0,
+                                                                      null,
+                                                                      null), 
+                                                    Times.Once);
+
+            mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id,
+                                                                      NotificationState.Successful,
+                                                                      0,
+                                                                      null,
+                                                                      null),
+                                                    Times.Once);
+
+
+            mock.MockNotificationTransporter.Verify(x => x.SendAsync(pendingNotifications[0].NotificationType,
+                                                                     pendingNotifications[0].Recipients,
+                                                                     pendingNotifications[0].Content),
+                                                    Times.Once);
+        }
+
+        #endregion
+
         public class Recipient
         {
 
@@ -147,7 +398,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
             public string ToAddress { get; set; }
         }
 
-        public class NotificationData : INotificationData
+        public class MockNotificationData : INotificationData
         {
             public long Id { get; set; }
             public string NotificationType { get; set; }
@@ -199,6 +450,8 @@ namespace UnitTests.Bottlecap.Net.Notifications
                 {
                     MockNotificationTransporter.Object
                 });
+
+                MockNotificationTransportManager.Setup(x => x.Get(MockNotificationTransporter.Object.TransporterType)).Returns(MockNotificationTransporter.Object);
             }
         }
     }

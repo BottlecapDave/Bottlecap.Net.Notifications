@@ -107,6 +107,11 @@ namespace Bottlecap.Net.Notifications.Services
 
         private async Task<NotifyStatus> NotifyAsync(INotificationData data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             bool wasSuccessful = false;
             var failureDetail = String.Empty;
             try
@@ -120,11 +125,16 @@ namespace Bottlecap.Net.Notifications.Services
                 }
 
                 var errors = await transporter.SendAsync(data.NotificationType, data.Recipients, data.Content);
-                wasSuccessful = errors.Any(x => String.IsNullOrEmpty(x) == false) == false;
-                failureDetail = errors?.Aggregate((current, next) => $"{current}. {next}");
+                wasSuccessful = errors?.Any(x => String.IsNullOrEmpty(x) == false) != true;
+                failureDetail = errors?.Any() == true ? errors?.Aggregate((current, next) => $"{current}. {next}") : null;
             }
             catch (System.Exception ex)
             {
+                if (ex is TransporterNotFoundException)
+                {
+                    throw;
+                }
+
                 failureDetail = ex.Message;
             }
             finally
