@@ -30,7 +30,8 @@ namespace Bottlecap.Net.Notifications.EF
                     Recipients = notification.Recipients,
                     RetryCount = 0
                 };
-            });
+            })
+            .ToArray(); // If we don't to array the collection, then our ids won't auto populate
 
             await _context.Notifications.AddRangeAsync(data);
 

@@ -11,6 +11,7 @@ COPY src/Bottlecap.Net.Notifications.EF/*.csproj ./Bottlecap.Net.Notifications.E
 
 COPY src/Examples/Bottlecap.Net.Notifications.ConsoleExample/*.csproj ./Examples/Bottlecap.Net.Notifications.ConsoleExample/
 COPY src/Tests/UnitTests.Bottlecap.Net.Notifications/*.csproj ./Tests/UnitTests.Bottlecap.Net.Notifications/
+COPY src/Tests/UnitTests.Bottlecap.Net.Notifications.EF/*.csproj ./Tests/UnitTests.Bottlecap.Net.Notifications.EF/
 
 COPY src/Bottlecap.Net.Notifications.Transporters.SendGrid/*.csproj ./Bottlecap.Net.Notifications.Transporters.SendGrid/
 COPY src/*.sln ./
@@ -41,6 +42,9 @@ RUN dotnet pack ./Bottlecap.Net.Notifications.EF/ -c Release -o out /p:Version=$
 # Run unit tests
 COPY src/Tests/UnitTests.Bottlecap.Net.Notifications/. ./Tests/UnitTests.Bottlecap.Net.Notifications/
 RUN dotnet test ./Tests/UnitTests.Bottlecap.Net.Notifications/ -c Release /p:CollectCoverage=true /p:CoverletOutput="../result/codecoverage/coverage.json" /p:Exclude="[xunit.*]*"
+
+COPY src/Tests/UnitTests.Bottlecap.Net.Notifications.EF/. ./Tests/UnitTests.Bottlecap.Net.Notifications.EF/
+RUN dotnet test ./Tests/UnitTests.Bottlecap.Net.Notifications.EF/ -c Release /p:CollectCoverage=true /p:CoverletOutput="../result/codecoverage/coverage.json" /p:MergeWith="../result/codecoverage/coverage.json" /p:Exclude="[xunit.*]*"
 
 # Push all packages
 RUN dotnet nuget push ./Bottlecap.Net.Notifications/out/Bottlecap.Net.Notifications.$PACKAGE_VERSION.nupkg -s https://api.nuget.org/v3/index.json -k $PACKAGE_API

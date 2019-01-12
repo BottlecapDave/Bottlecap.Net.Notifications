@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{E5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bottlecap.Net.Notifications.ConsoleExample", "Examples\Bottlecap.Net.Notifications.ConsoleExample\Bottlecap.Net.Notifications.ConsoleExample.csproj", "{41BCA695-0D4E-4372-88F7-DDEC3B399112}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Bottlecap.Net.Notifications", "Tests\UnitTests.Bottlecap.Net.Notifications\UnitTests.Bottlecap.Net.Notifications.csproj", "{20DB8EB0-67DD-4691-8950-7AC299A5E028}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Bottlecap.Net.Notifications", "Tests\UnitTests.Bottlecap.Net.Notifications\UnitTests.Bottlecap.Net.Notifications.csproj", "{20DB8EB0-67DD-4691-8950-7AC299A5E028}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Bottlecap.Net.Notifications.EF", "Tests\UnitTests.Bottlecap.Net.Notifications.EF\UnitTests.Bottlecap.Net.Notifications.EF.csproj", "{E4270F29-3D6A-4590-A639-D9EC65A8C84B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{20DB8EB0-67DD-4691-8950-7AC299A5E028}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20DB8EB0-67DD-4691-8950-7AC299A5E028}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20DB8EB0-67DD-4691-8950-7AC299A5E028}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4270F29-3D6A-4590-A639-D9EC65A8C84B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4270F29-3D6A-4590-A639-D9EC65A8C84B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4270F29-3D6A-4590-A639-D9EC65A8C84B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4270F29-3D6A-4590-A639-D9EC65A8C84B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{41BCA695-0D4E-4372-88F7-DDEC3B399112} = {E50CCEEA-4F25-41AE-847D-28E8CA97983D}
 		{20DB8EB0-67DD-4691-8950-7AC299A5E028} = {D7679BA8-3FCF-47F2-AC22-371C4BC742DE}
+		{E4270F29-3D6A-4590-A639-D9EC65A8C84B} = {D7679BA8-3FCF-47F2-AC22-371C4BC742DE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {699C2753-6EEB-4989-B29A-DA6B2A5EA9F4}
