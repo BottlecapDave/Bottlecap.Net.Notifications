@@ -138,7 +138,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
             // Arrange
             var mock = new MockNotificationService();
             
-            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck))).Returns(Task.FromResult<IEnumerable<INotificationData>>(null));
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>())).Returns(Task.FromResult<IEnumerable<INotificationData>>(null));
 
             // Act
             var result = await mock.Service.ExecuteAsync();
@@ -159,13 +159,13 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
 
-            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck))).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>())).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
 
             // Act & Assert
             await Assert.ThrowsAsync<TransporterNotFoundException>(() => mock.Service.ExecuteAsync());
 
             // Assert
-            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck)), Times.Once);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>()), Times.Once);
 
             mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
                                                                       NotificationState.Processing,
@@ -198,7 +198,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
 
-            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck))).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>())).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
             mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
                                             .Callback(() => throw new SystemException());
 
@@ -207,7 +207,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             // Assert
             Assert.Equal(0, result);
-            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck)), Times.Once);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>()), Times.Once);
 
             mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
                                                                       NotificationState.Processing,
@@ -246,7 +246,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             var expectedNextSchedule = DateTime.UtcNow.AddSeconds(60);
 
-            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck))).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>())).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
 
             var transporterErrors = new string[] { "error" };
             mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
@@ -257,7 +257,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             // Assert
             Assert.Equal(0, result);
-            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck)), Times.Once);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>()), Times.Once);
 
             mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
                                                                       NotificationState.Processing,
@@ -296,7 +296,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
                 }
             };
 
-            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck))).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>())).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
 
             var transporterErrors = new string[] { "error" };
             mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
@@ -307,7 +307,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             // Assert
             Assert.Equal(0, result);
-            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck)), Times.Once);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>()), Times.Once);
 
             mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
                                                                       NotificationState.Processing,
@@ -347,7 +347,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
                 }
             };
 
-            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck))).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
+            mock.MockNotificationRepository.Setup(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>())).Returns(Task.FromResult<IEnumerable<INotificationData>>(pendingNotifications));
 
             mock.MockNotificationTransporter.Setup(x => x.SendAsync(pendingNotifications[0].NotificationType, pendingNotifications[0].Recipients, pendingNotifications[0].Content))
                                             .Returns(Task.FromResult<IEnumerable<string>>(isErrorsCollectionNull ? null : new string[0]));
@@ -357,7 +357,7 @@ namespace UnitTests.Bottlecap.Net.Notifications
 
             // Assert
             Assert.Equal(1, result);
-            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck)), Times.Once);
+            mock.MockNotificationRepository.Verify(x => x.GetPendingNotificationsAsync(It.Is<DateTime>(mock.ExpectedPendingNotificationsTimestampCheck), It.IsAny<int?>()), Times.Once);
 
             mock.MockNotificationRepository.Verify(x => x.UpdateAsync(pendingNotifications[0].Id, 
                                                                       NotificationState.Processing,

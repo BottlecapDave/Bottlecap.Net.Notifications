@@ -8,8 +8,6 @@ namespace Bottlecap.Net.Notifications.EF
 {
     public class NotificationRepository : INotificationRepository
     {
-        private const int MAXIMUM_NOTIFICATIONS_COUNT = 24;
-
         private readonly IDataContext _context;
         public NotificationRepository(IDataContext context)
         {
@@ -39,18 +37,23 @@ namespace Bottlecap.Net.Notifications.EF
             return numberOfChanged > 0 ? data : null;
         }
 
-        public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync(DateTime latestCreationTimestamp)
+        public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync(DateTime latestCreationTimestamp, int? numberOfItemsExecute = null)
         {
-            return Task.FromResult<IEnumerable<INotificationData>>(_context.Notifications.Where(x => 
+            IQueryable<INotificationData> items = _context.Notifications.Where(x =>
                 (
                     (x.State == NotificationState.Created || x.State == NotificationState.WaitingForRetry || x.State == NotificationState.TransporterNotFound) &&
                     x.CreationTimestamp <= latestCreationTimestamp &&
                     (x.NextExecutionTimestamp == null || x.NextExecutionTimestamp <= DateTime.UtcNow)
                 )
             )
-            .OrderBy(x => x.LastUpdatedTimestamp)
-            .Take(MAXIMUM_NOTIFICATIONS_COUNT)
-            .ToArray());
+            .OrderBy(x => x.LastUpdatedTimestamp);
+
+            if (numberOfItemsExecute.HasValue)
+            {
+                items = items.Take(numberOfItemsExecute.Value);
+            }
+
+            return Task.FromResult<IEnumerable<INotificationData>>(items.ToArray());
         }
 
         public async Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)

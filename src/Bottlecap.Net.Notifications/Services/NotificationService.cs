@@ -22,11 +22,11 @@ namespace Bottlecap.Net.Notifications.Services
             _options = options;
         }
 
-        public async Task<long> ExecuteAsync()
+        public async Task<long> ExecuteAsync(int? numberOfItemsExecute = null)
         {
             var totalSent = 0;
             var latestPendingCreationTimestamp = DateTime.UtcNow.AddSeconds(Math.Abs(_options.PendingNotificationOffsetInSeconds) * -1);
-            var notifications = await _repository.GetPendingNotificationsAsync(latestPendingCreationTimestamp);
+            var notifications = await _repository.GetPendingNotificationsAsync(latestPendingCreationTimestamp, numberOfItemsExecute);
             if (notifications != null)
             {
                 foreach (var item in notifications)

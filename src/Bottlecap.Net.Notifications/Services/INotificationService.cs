@@ -34,7 +34,8 @@ namespace Bottlecap.Net.Notifications.Services
         /// <summary>
         /// Attempt to send any scheduled notifications using their specified transporters.
         /// </summary>
+        /// <param name="numberOfItemsExecute">The number of items to execute</param>
         /// <returns>The number of notifications that were successfully sent.</returns>
-        Task<long> ExecuteAsync();
+        Task<long> ExecuteAsync(int? numberOfItemsExecute = null);
     }
 }
