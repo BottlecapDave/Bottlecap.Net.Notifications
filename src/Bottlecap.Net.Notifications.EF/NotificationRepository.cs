@@ -14,7 +14,7 @@ namespace Bottlecap.Net.Notifications.EF
             _context = context;
         }
         
-        public async Task<IEnumerable<INotificationData>> AddAsync(IEnumerable<CreatableNotification> notifications)
+        public virtual async Task<IEnumerable<INotificationData>> AddAsync(IEnumerable<CreatableNotification> notifications)
         {
             var data = notifications.Select(notification =>
             {
@@ -37,7 +37,7 @@ namespace Bottlecap.Net.Notifications.EF
             return numberOfChanged > 0 ? data : null;
         }
 
-        public Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync(DateTime latestCreationTimestamp, int? numberOfItemsExecute = null)
+        public virtual Task<IEnumerable<INotificationData>> GetPendingNotificationsAsync(DateTime latestCreationTimestamp, int? numberOfItemsExecute = null)
         {
             IQueryable<INotificationData> items = _context.Notifications.Where(x =>
                 (
@@ -56,7 +56,7 @@ namespace Bottlecap.Net.Notifications.EF
             return Task.FromResult<IEnumerable<INotificationData>>(items.ToArray());
         }
 
-        public async Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
+        public virtual async Task UpdateAsync(long id, NotificationState state, int retryCount, string failureDetail, DateTime? nextExecutionTimestamp)
         {
             var data = await _context.Notifications.FindAsync(id);
             if (data != null)
